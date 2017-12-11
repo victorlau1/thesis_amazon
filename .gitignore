@@ -1,0 +1,6 @@
+.environment.sh
+dev-env
+.vscode
+firehose/__pycache__
+
+
