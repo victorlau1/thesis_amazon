@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest.framework',
+    'rest_framework',
+    'server.apps.ServerConfig'
 ]
 
 MIDDLEWARE = [
@@ -77,11 +78,10 @@ WSGI_APPLICATION = 'firehose.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': 'thesis',
+        'USER': 'postgres',
+        'PASSWORD': '050492',
+        'HOST': 'localhost'
     },
 }
 
