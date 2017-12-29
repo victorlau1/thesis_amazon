@@ -83,14 +83,15 @@ class Item_Models_Tests(TestCase):
       Each item will save appropriately within the database table
     """
     test_cart = self.cart
-    for item in test_cart:
-      Items.objects.create({
-        cart_id : test_cart.cart_id,
-        id : item.id,
-        item_price : item.item_price,
-        shipping_cost : item.shipping_cost,
-        quantity : item.quantity
-      }).save()
+    Carts.objects.create(cart_id=test_cart['id'], user_id=test_cart['user_id'], subtotal=test_cart['subtotal'], shipping_cost=test_cart['shipping_cost'])
+    for item in test_cart['item_list']:
+      Items.objects.create(
+        cart_id = Carts.objects.get(cart_id=test_cart['id']),
+        id = item['id'],
+        item_price = item['item_price'],
+        shipping_cost = item['shipping_cost'],
+        quantity = item['quantity']
+      ).save()
     self.assertEqual(Items.objects.count(), 2)
     print('All Items saved')
 
@@ -116,22 +117,47 @@ class Item_Database_Tests(TestCase):
   """
     Item DB Model Test Checks 
   """
+  def setUp(self):
+
+    self.cart = {
+      'id': 49100,
+      'user_id': 23,
+      'shipping_cost': 7.60,
+      'subtotal': 148.00,
+      'item_list': [{
+            'id': 49200,
+            'shipping_cost': 9.86,
+            'item_price': 100.00,
+            'valid_purchase': False,
+            'quantity': 3
+            },
+            {
+            'id': 49100,
+            'shipping_cost': 5.00,
+            'item_price': 40.00,
+            'valid_purchase': False,
+            'quantity': 2
+            }]
+      }
+
   def test_item_purchase(self):
     """
-      Cart Model Updates Appropriately When Receiving 
+      Cart Model Updates Appropriately When Receiving Validated Item
     """
-    test_cart = Cart_Models_Tests.create_test_cart(self)
-    for item in test_cart.item_list:
-      Items.objects.create({
-        cart_id : test_cart.cart_id,
-        id : item.id,
-        item_price : item.item_price,
-        shipping_cost : item.shipping_cost,
-        quantity : item.quantity
-      }).save()
-    self.assertEqual(Items.objects.get(id=item.id, cart_id=test_cart.cart_id).valid_purchase, False)
-    Items.objects.get(id=item.id, cart_id=test_cart.cart_id).update(valid_purchase=True)
-    self.assertEqual(Items.objects.get(id=item.id, cart_id=test_cart.cart_id).valid_purchase, True)
+
+    test_cart = self.cart
+    Carts.objects.create(cart_id=test_cart['id'], user_id=test_cart['user_id'], subtotal=test_cart['subtotal'], shipping_cost=test_cart['shipping_cost'])
+    for item in test_cart['item_list']:
+      Items.objects.create(
+        cart_id = Carts.objects.get(cart_id=test_cart['id']),
+        id = item['id'],
+        item_price = item['item_price'],
+        shipping_cost = item['shipping_cost'],
+        quantity = item['quantity']
+      ).save()
+      self.assertEqual(Items.objects.get(id=item['id'], cart_id=test_cart['id']).valid_purchase, False)
+      Items.objects.select_related().filter(id=item['id'], cart_id=test_cart['id']).update(valid_purchase=True)
+      self.assertEqual(Items.objects.get(id=item['id'], cart_id=test_cart['id']).valid_purchase, True)
     print('Updated Purchase from False to True')
 
 
@@ -160,7 +186,7 @@ class Cart_Services_Test(TestCase):
       'user_id': 25
     }
 
-  #def cart_checkout(self, test_data, callback=MockTest.):
+  def cart_checkout(self, test_data, callback=MockTest.):
 
 
 
@@ -230,7 +256,7 @@ class Cart_API_Tests(APITestCase):
       GET Request 
       If cart is already in process of being verified, do not send another request
     """
-    url = reverse("/purchases/")
+    url = reverse("/purchases")
     response = self.client.post(url, self.test_data, format='json')
     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -240,7 +266,7 @@ class Cart_API_Tests(APITestCase):
     """
       Should check that the model is created from the API endpoint
     """
-    url = reverse("/purchases/")
+    url = reverse("/purchases")
     response = self.client.post(url, self.test_data, format='json')
     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     self.assertEqual(Carts.objects.count(), 1)
