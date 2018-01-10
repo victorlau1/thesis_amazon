@@ -21,9 +21,9 @@ class Items(models.Model):
     Item per Cart list; Combo Key is cart_id, and item_id. 
   """
   class Meta:
-    unique_together = (('cart_id','id'))
-
-  cart_id = models.ForeignKey(Carts, db_constraint=False, on_delete=models.CASCADE)
+    unique_together = ('cart','item_id')
+  item_id = models.IntegerField()
+  cart = models.ForeignKey(Carts, db_constraint=False, on_delete=models.CASCADE)
   item_price = models.FloatField()
   shipping_cost = models.FloatField()
   quantity = models.IntegerField()
