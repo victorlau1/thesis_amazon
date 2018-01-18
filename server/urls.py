@@ -1,13 +1,12 @@
 from rest_framework import routers
-from .views import CartViewSet, InventoryViewSet
+from server import views
 from django.conf.urls import url, include
 
-router = routers.SimpleRouter()
-router.register(r'purchases', CartViewSet, base_name = 'Carts')
-router.register(r'validation', InventoryViewSet, base_name = 'Items')
+# router = routers.SimpleRouter()
+# router.register(r'purchases', views.cart_detail, base_name='purchases')
 
 urlpatterns = [
-  url(r'^', include(router.urls)),
+  url(r'^purchases/$', views.cart_detail),
   url(r'api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
