@@ -8,6 +8,8 @@ def validate_order(cart):
     """
       Should send a request to validate the order based on endpoint
     """
+    url = 'endpoint'
+
     return 'Request Sent for user %s' % cart['user_id']
 
 def cart_checkout(cart, callback=validate_order):
@@ -37,9 +39,12 @@ def cart_checkout(cart, callback=validate_order):
 
       callback(cart)
       return "Checkout for user %s" % cart['user_id']
+    #in the except, put more type errors such as TyperErrors (more error tracking)
+    #google type errors for python 
 
     except:
-      print('Un-expected Error in saving, issue was %s' % sys.exc_info()[0])
+      print(sys.exc_info())
       logger.error(sys.exc_info()[1])
-      raise
+      raise 
+
 
