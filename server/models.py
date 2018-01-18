@@ -6,7 +6,7 @@ class Carts(models.Model):
   """ 
     Cart Data Received From Clients Microservice
   """
-  cart_id = models.IntegerField(primary_key=True)
+  cart_id = models.IntegerField(default=100)
   user_id = models.IntegerField()
   subtotal = models.FloatField()
   shipping_cost = models.FloatField()
@@ -19,11 +19,9 @@ class Carts(models.Model):
 class Items(models.Model):
   """
     Item per Cart list; Combo Key is cart_id, and item_id. 
-  """
-  class Meta:
-    unique_together = ('cart','item_id')
+  """  
   item_id = models.IntegerField()
-  cart = models.ForeignKey(Carts, db_constraint=False, on_delete=models.CASCADE)
+  cart_id = models.IntegerField()
   item_price = models.FloatField()
   shipping_cost = models.FloatField()
   quantity = models.IntegerField()
