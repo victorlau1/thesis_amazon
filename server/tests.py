@@ -86,7 +86,7 @@ class Item_Models_Tests(TestCase):
     Carts.objects.create(cart_id=test_cart['id'], user_id=test_cart['user_id'], subtotal=test_cart['subtotal'], shipping_cost=test_cart['shipping_cost'])
     for item in test_cart['item_list']:
       Items.objects.create(
-        cart = Carts.objects.get(cart_id=test_cart['id']),
+        cart_id = test_cart['id'],
         item_id = item['id'],
         item_price = item['item_price'],
         shipping_cost = item['shipping_cost'],
@@ -108,7 +108,7 @@ class Cart_Database_Tests(TestCase):
     """
     test_cart = Cart_Models_Tests.create_test_cart(self)
     test_cart.save()
-    test_cart_db = Carts.objects.filter(pk=test_cart.cart_id)
+    test_cart_db = Carts.objects.filter(cart_id=test_cart.cart_id)
     self.assertEqual(test_cart_db[0].cart_id, test_cart.cart_id)
     print('Cart Save Works')
   
@@ -149,7 +149,7 @@ class Item_Database_Tests(TestCase):
     Carts.objects.create(cart_id=test_cart['id'], user_id=test_cart['user_id'], subtotal=test_cart['subtotal'], shipping_cost=test_cart['shipping_cost'])
     for item in test_cart['item_list']:
       Items.objects.create(
-        cart = Carts.objects.get(cart_id=test_cart['id']),
+        cart_id = test_cart['id'],
         item_id = item['id'],
         item_price = item['item_price'],
         shipping_cost = item['shipping_cost'],
