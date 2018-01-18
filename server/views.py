@@ -1,19 +1,32 @@
 from django.contrib.auth.models import User, Group
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
+from rest_framework.parsers import JSONParser
 from .models import Carts, Items
 from .serializers import CartSerializer, ItemSerializer
 from .services import cart_checkout
+import logging
+logger = logging.getLogger(__name__)
 
-class CartViewSet(viewsets.ModelViewSet):
+@csrf_exempt
+def cart_detail(request):
   """
-  API endpoint that handles incoming post requests for carts
+   Routes to cat checkout services
   """
-  queryset = Carts.objects.all()
-  serializer_class = CartSerializer
 
-class InventoryViewSet(viewsets.ModelViewSet):
-  """
-  API endpoint that handles incoming post requests for validating inventory levels
-  """
+  if request.method == 'GET':
+    
+    carts = Carts.objects.all()
+    serializer = CartSerializer(carts, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+  elif request.method == 'POST': 
+    data = JSONParser().parse(request)
+    try:
+      cart_checkout(data)
+      return JsonResponse('Posted', status=201, safe=False)
+    except:
+      return JsonResponse('Error Saving Data', status=400, safe=False)
 
 
