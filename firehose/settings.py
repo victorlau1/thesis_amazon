@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
+import os, requests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,10 +23,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qu^=y_efnll7h+*aqs2k1mydy+b@t376asd&n)pi9&9i(4ocp9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
+#Dynamically getting local host:
+try:
+    EC2_IP = requests.get('http://169.254.169.254/latest/meta-data/local-ipv4').text
+    ALLOWED_HOSTS.append(EC2_IP)
+except requests.exceptions.RequestException:
+    pass
 
 # Application definition
 
